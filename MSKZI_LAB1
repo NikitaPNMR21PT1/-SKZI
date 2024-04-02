@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <fstream>
 using namespace std;
-
 int main()
 {
     long long int rlz1 = 445897; //Начальное состояние первой рекурентной линии задержки
