@@ -12,14 +12,14 @@ int main()
     int short buffer = 0; // Переменная для переноса числа в другую ячейку массива
     long long int rlz2[2] = { 15543564,64266343421 }; //Начальное состоянии второй рекурентной линии задержки
     long long int gamma = 0; //Выходная последовательность
-    char Name[16] = {};
-    char name[16] = {};
-    cout << "Enter the ciphertext file name ";
-    cin >> name;
+    char Title[16] = {};
+    char title[16] = {};
+    cout << "Enter the ciphertext file title ";
+    cin >> title;
     cout << "Введите имя файла c открытым текстом ";
-    cin >> Name;
-    ofstream out(name, ios::binary);
-    ifstream in(Name, ios::binary);
+    cin >> Title;
+    ofstream out(title, ios::binary);
+    ifstream in(Title, ios::binary);
     while (in.read((char*)&data, sizeof(long long int))) {
         for (int i = 0; i < 64; i++) {
             gamma = gamma << 1; //Сдвиг выходной последовательности на 1 бит
