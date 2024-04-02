@@ -1,1 +1,42 @@
+#include <iostream>
+#include <stdio.h>
+#include <fstream>
+using namespace std;
 
+int main()
+{
+    long long int mask;
+    long long int data;
+    long long int rlz1 = 445897; //Начальное состояние первой рекурентной линии задержки
+    int short bit_gamma = 0; //Символ выходной последовательности в определенном такте
+    int short buffer = 0; // Переменная для переноса числа в другую ячейку массива
+    long long int rlz2[2] = { 15543564,64266343421 }; //Начальное состоянии второй рекурентной линии задержки
+    long long int gamma = 0; //Выходная последовательность
+    char Name[16] = {};
+    char name[16] = {};
+    cout << "Enter the ciphertext file name ";
+    cin >> name;
+    cout << "Введите имя файла c открытым текстом ";
+    cin >> Name;
+    ofstream out(name, ios::binary);
+    ifstream in(Name, ios::binary);
+    while (in.read((char*)&data, sizeof(long long int))) {
+        for (int i = 0; i < 64; i++) {
+            gamma = gamma << 1; //Сдвиг выходной последовательности на 1 бит
+            bit_gamma = ((((rlz1 >> 19) ^ (rlz1 >> 12)) & 0x1) ^ (((rlz2[0] >> 54) ^ (rlz2[0] >> 21)) & 0x1)); //Формирование символа выходной последовательности в определенном такте
+            gamma = gamma + bit_gamma; //Прибавление символа выходной последовательности
+            rlz1 = rlz1 << 1; //Сдвиг РЛЗ1 на 1 бит влево
+            rlz1 = rlz1 + (((rlz1 >> 19) ^ (rlz1 >> 12)) & 0x1); // Запись бита обратной связи в РЛЗ1
+            buffer = (rlz2[1] >> 63) & 0x1; // Запись в буффер первого символа второй части РЛЗ2
+            rlz2[0] = rlz2[0] << 1; //Сдвиг первой части РЛЗ2 на 1 бит
+            rlz2[1] = rlz2[1] << 1; //Сдвиг второй части РЛЗ2 на 1 бит
+            rlz2[0] = rlz2[0] + buffer; // Запись первго символа второй части РЛЗ2 в конец первой части РЛЗ1
+            rlz2[1] = rlz2[1] + (((rlz2[0] >> 54) ^ (rlz2[0] >> 21)) & 0x1); //Запись бита обратной связи в РЛЗ2
+        }
+        mask = data ^ gamma;
+        out.write((char*)&mask, sizeof(long long int));
+    }
+    in.close();
+    out.close();
+    return 0;
+}
